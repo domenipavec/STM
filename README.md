@@ -1,0 +1,2 @@
+# STM
+Smart thumbnail maker
