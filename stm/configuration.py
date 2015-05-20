@@ -14,13 +14,13 @@ import cv2
 class Configuration:
     def __init__(self):
         # file name prefix for folder or multi-image thumbnails
-        self.name_prefix = ""
+        self.name_prefix = None
         
         # file name postfix for folder or multi-image thumbnails
-        self.name_postfix = ""
+        self.name_postfix = None
         
         # file folder for folder or multi-image thumbnails
-        self.folder = "./thumbs/"
+        self.folder = None
         
         # file format for folder or multi-image thumbnails
         self.fileFormat = "png"
@@ -32,10 +32,10 @@ class Configuration:
         self.size = (100,100)
         
         # input file(s)
-        self.input = ""
+        self.input = None
         
         # output file if specified
-        self.output = ""
+        self.output = None
         
         # featured area if specified
         self.featured = None
