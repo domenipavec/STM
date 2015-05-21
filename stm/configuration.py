@@ -38,18 +38,15 @@ class Configuration:
         # output file if specified
         self.output = None
         
-        # featured area if specified
+        # image crop mode ('none', 'padd', 'crop', 'featured', 'smart')
+        self.cropMode = 'smart'
+
+        # color for padding mode
+        self.paddColor = None
+        
+        # area for featured mode
         self.featured = None
         
-        # whether image should be cropped to target size
-        self.crop = True
-        
-        # whether image should be padded to target size if not cropped
-        self.padding = False
-        
-        # whether featured area should be auto-detected if not specified
-        self.smart = True
-
         # mode for video thumbnails (time, "random", "random-still", 'ignore')
         self.videoMode = "random-still"
         
