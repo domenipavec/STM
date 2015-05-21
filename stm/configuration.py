@@ -14,15 +14,16 @@ import cv2
 class Configuration:
     def __init__(self):
         # file name prefix for folder or multi-image thumbnails
-        self.name_prefix = None
+        self.name_prefix = ''
         
         # file name postfix for folder or multi-image thumbnails
-        self.name_postfix = None
+        self.name_postfix = ''
         
         # file folder for folder or multi-image thumbnails
         self.folder = None
         
         # file format for folder or multi-image thumbnails
+        # 'source' to keep original extension
         self.fileFormat = "png"
         
         # how much zooming is preffered

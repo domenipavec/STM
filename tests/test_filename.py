@@ -53,7 +53,7 @@ class Test_filename(TestCase):
     def test_format_source(self):
         self.conf.fileFormat = 'source'
         self.checkImage("input.png", "thumbs/input.png")
-        self.checkImage("image.jpg", "thumbs/input.jpg")
+        self.checkImage("image.jpg", "thumbs/image.jpg")
         self.checkImage("13 De_(com)čšž.test.jpg", "thumbs/13 De_(com)čšž.test.jpg")
         self.checkImage("/path/to/file/input.png", "/path/to/file/thumbs/input.png")
 
