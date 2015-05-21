@@ -32,7 +32,7 @@ class Configuration:
         # target image size
         self.size = (100,100)
         
-        # input file(s)
+        # input file(s) or folder(s)
         self.input = None
         
         # output file if specified
@@ -44,10 +44,13 @@ class Configuration:
         # whether image should be cropped to target size
         self.crop = True
         
+        # whether image should be padded to target size if not cropped
+        self.padding = False
+        
         # whether featured area should be auto-detected if not specified
         self.smart = True
 
-        # mode for video thumbnails (time or "random" or "random-still")
+        # mode for video thumbnails (time, "random", "random-still", 'ignore')
         self.videoMode = "random-still"
         
         # interpolation to use in resize
