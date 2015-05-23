@@ -42,7 +42,7 @@ class Configuration:
         self.cropMode = 'smart'
 
         # color for padding mode
-        self.paddColor = None
+        self.paddColor = (255,255,255,0)
         
         # area for featured mode
         self.featured = None
