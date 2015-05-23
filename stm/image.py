@@ -19,9 +19,12 @@ class Image:
     
     def loadImage(self, fn):
         self.filename = fn
+        self.image = cv2.imread(self.filename, cv2.IMREAD_UNCHANGED)
     
     def saveThumbnail(self):
-        pass
+        thumb = self.getThumbnail()
+        name = self.getThumbnailName()
+        cv2.imwrite(name, thumb)
 
     # Construct name for thumbnail based on image name and configuration
     def getThumbnailName(self):
@@ -94,9 +97,3 @@ class Image:
     
     def getThumbnail_smart(self):
         return np.zeros((100, 100, 4))
-    
-    def getThumbnailSize(self):
-        pass
-        
-    def getThumbnailBox(self):
-        pass

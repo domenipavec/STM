@@ -14,11 +14,6 @@ from unittest import TestCase
 from stm.configuration import Configuration
 from stm.image import Image
 
-from numpy.linalg import norm
-
-from random import randint
-import numpy as np
-
 import cv2
 
 class Test_get_thumbnail(TestCase):
