@@ -30,11 +30,11 @@ setup(
     
     entry_points={
         'console_scripts': [
-#            'cssqc=cssqc:main',
+            'stm=stm:main',
         ],
     },
     
     package_data={
-        'cssqc': [ ],
+        'stm': [ ],
     }
 )
