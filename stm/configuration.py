@@ -35,6 +35,9 @@ class Configuration:
         # input file(s) or folder(s)
         self.input = None
         
+        # parse folders recursively
+        self.recursive = False
+        
         # output file if specified
         self.output = None
         

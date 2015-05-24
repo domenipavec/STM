@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 # ----------------------------------------------------------------
-# tests/test_filename.py
+# tests/test_get_thumbnail.py
 # 
-# Test thumbnail file name generation.
+# Test thumbnails against hand created ones.
 # ----------------------------------------------------------------
 # copyright (c) 2015 - Domen Ipavec
 # Distributed under The MIT License, see LICENSE
@@ -20,6 +20,9 @@ class Test_get_thumbnail(TestCase):
     
     def loadImage(self, name):
         return cv2.imread('examples/' + name + '.png', cv2.IMREAD_UNCHANGED)
+
+    def loadThumb(self, name):
+        return cv2.imread('thumbnails/' + name + '.png', cv2.IMREAD_UNCHANGED)
     
     def setUp(self):
         self.conf = Configuration()
@@ -35,7 +38,7 @@ class Test_get_thumbnail(TestCase):
             
             for name in ['landscape', 'square', 'portrait']:
                 loaded_img = self.loadImage(name)
-                loaded_thumb = self.loadImage(name + '_thumb_' + mode)
+                loaded_thumb = self.loadThumb(name + '_thumb_' + mode)
                 
                 # create thumbnail
                 img = Image(self.conf)

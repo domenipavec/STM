@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 # ----------------------------------------------------------------
-# tests/test_filename.py
+# tests/test_load_save.py
 # 
-# Test thumbnail file name generation.
+# Test loading images and saving thumbnails.
 # ----------------------------------------------------------------
 # copyright (c) 2015 - Domen Ipavec
 # Distributed under The MIT License, see LICENSE
@@ -28,7 +28,7 @@ class Test_load_save(TestCase):
         return cv2.imread('examples/' + name + '.png', cv2.IMREAD_UNCHANGED)
     
     def setUp(self):
-        self.tempfile = path.join(tempdir, 'test.png')
+        self.tempfile = path.join(tempdir, 'stm-test.png')
         self.conf = Configuration()
         self.conf.output = self.tempfile
         self.conf.cropMode = 'none'

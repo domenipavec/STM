@@ -43,6 +43,13 @@ class Test_filename(TestCase):
         self.checkImage("13 De_(com)čšž.test.jpg", "test-folder/13 De_(com)čšž.test.png")
         self.checkImage("/path/to/file/input.jpg", "/path/to/file/test-folder/input.png")
 
+    def test_abs_folder(self):
+        self.conf.folder = "/tmp"
+        self.checkImage("input.png", "/tmp/input.png")
+        self.checkImage("input.jpg", "/tmp/input.png")
+        self.checkImage("13 De_(com)čšž.test.jpg", "/tmp/13 De_(com)čšž.test.png")
+        self.checkImage("/path/to/file/input.jpg", "/tmp/input.png")
+
     def test_format_jpg(self):
         self.conf.fileFormat = 'jpg'
         self.checkImage("input.png", "thumbs/input.jpg")

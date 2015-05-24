@@ -20,6 +20,10 @@ class Image:
     def loadImage(self, fn):
         self.filename = fn
         self.image = cv2.imread(self.filename, cv2.IMREAD_UNCHANGED)
+        if self.image == None:
+            return False
+        else:
+            return True
     
     def saveThumbnail(self):
         thumb = self.getThumbnail()

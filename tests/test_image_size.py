@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 # ----------------------------------------------------------------
-# tests/test_filename.py
+# tests/test_image_size.py
 # 
-# Test thumbnail file name generation.
+# Test thumbnail size.
 # ----------------------------------------------------------------
 # copyright (c) 2015 - Domen Ipavec
 # Distributed under The MIT License, see LICENSE
