@@ -55,6 +55,7 @@ class Test_image_size(TestCase):
         self.checkSize(img_s, (100,100))
     
     def test_mode_other(self):
+        self.conf.featured = [[0,0],[100,100]]
         for mode in ['padd', 'crop', 'featured', 'smart']:
             self.conf.cropMode = mode
             

@@ -42,10 +42,11 @@ class Parser:
         group.add_argument('--scale', help='Make thumbnail with regular scale.', action='store_true')
         group.add_argument('--padd', help='Make thumbnail and padd to dimension.', action='store_true')
         group.add_argument('--crop', help='Make thumbnail with cropping.', action='store_true')
-        group.add_argument('--featured', help='Specify interesting part of image (e.g. "100x100,150x150"), you can use negative to start at bottom or right.')
+        group.add_argument('--featured', help='Specify interesting part of image with two points (e.g. "100x100,150x150"), you can use negative to start at bottom or right.')
         group.add_argument('--smart', help='Automatically detect interesting part of image (default).', action='store_true')
         
         parser.add_argument('--paddColor', help='Color for padding (default is "255,255,255,0"), format is BGRA.')
+        parser.add_argument('--zoominess', help='How much to zoom in interesting part (between 0 and 100, default is 30).', type=int)
 
         args = parser.parse_args(arguments)
         
@@ -122,5 +123,13 @@ class Parser:
             if len(parts) != 4:
                 parser.error("--paddColor Invalid color.")
             conf.paddColor = parts
+        
+        if type(args.zoominess) is int:
+            if conf.cropMode != 'featured' and conf.cropMode != 'smart':
+                parser.error("--zoominess Option is only valid in --featured and --smart modes.")
+            if 0 <= args.zoominess <= 100:
+                conf.zoominess = args.zoominess
+            else:
+                parser.error("--zoominess Out of range")
         
         return conf

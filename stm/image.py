@@ -103,7 +103,66 @@ class Image:
         return cv2.resize(cropped, None, fx=scale, fy=scale, interpolation=self.configuration.resizeInterpolation)
     
     def getThumbnail_featured(self):
-        return np.zeros((100, 100, 4))
+        area_center = [0,0]
+        area_dimension = [0,0]
+        
+        # calculate coordinates for interesting area
+        for point in self.configuration.featured:
+            # negative coordinates start at right and bottom
+            if point[0] < 0:
+                point[0] += self.image.shape[1]
+            if point[1] < 0:
+                point[1] += self.image.shape[0]
+            
+            if point[0] < 0 or point[0] >= self.image.shape[1]:
+                raise Exception("Featured point out of image!")
+            if point[1] < 0 or point[1] >= self.image.shape[0]:
+                raise Exception("Featured point out of image!")
+            
+            area_center[0] += point[0]
+            area_center[1] += point[1]
+            
+            if area_dimension[0] == 0:
+                area_dimension[0] = point[0]
+            else:
+                area_dimension[0] -= point[0]
+            if area_dimension[1] == 0:
+                area_dimension[1] = point[1]
+            else:
+                area_dimension[1] -= point[1]
+        
+        area_center[0] /= 2
+        area_center[1] /= 2
+        
+        area_dimension[0] = abs(area_dimension[0])
+        area_dimension[1] = abs(area_dimension[1])
+        
+        # scale when max zoomed in
+        max_scale = min(float(self.configuration.size[0])/area_dimension[0],
+                    float(self.configuration.size[1])/area_dimension[1])
+        
+        # scale when whole image in thumb
+        min_scale = max(float(self.configuration.size[0])/self.image.shape[0],
+                    float(self.configuration.size[1])/self.image.shape[1])
+        
+        # if max zoom more out than whole thumb, correct
+        if min_scale > max_scale:
+            min_scale = max_scale
+        
+        # scale is inverse in size, so linear fit between sizes based on zoominess
+        scale = 1/((1/max_scale-1/min_scale)/100*self.configuration.zoominess + 1/min_scale)
+        
+        # calculate actual base image area size based on actual scale
+        actual_area_size = [round(self.configuration.size[0]/scale), round(self.configuration.size[1]/scale)]
+        
+        # calculate base image area 
+        left = max(area_center[0] - actual_area_size[0]/2, 0)
+        right = left + actual_area_size[0]
+        top = max(area_center[1] - actual_area_size[1]/2, 0)
+        bottom = top + actual_area_size[1]
+        
+        cropped = self.image[top:bottom, left:right]
+        return cv2.resize(cropped, None, fx=scale, fy=scale, interpolation=self.configuration.resizeInterpolation)
     
     def getThumbnail_smart(self):
         return np.zeros((100, 100, 4))

@@ -131,3 +131,16 @@ class Test_parser(TestCase):
         self.assertInvalid('--input test.png --padd --paddColor -1,100,100')
         self.assertInvalid('--input test.png --padd --paddColor 256,100,100')
         self.assertInvalid('--input test.png --paddColor 0,100,100')
+
+    def test_zoominess(self):
+        conf = self.getConf('--input test.png --zoominess 10')
+        self.assertEqual(conf.zoominess, 10)
+
+        conf = self.getConf('--input test.png --zoominess 0')
+        self.assertEqual(conf.zoominess, 0)
+        
+        self.assertInvalid('--input test.png --zoominess 101')
+        self.assertInvalid('--input test.png --zoominess -1')
+        self.assertInvalid('--input test.png --zoominess 45 --padd')
+        self.assertInvalid('--input test.png --zoominess 45 --crop')
+        self.assertInvalid('--input test.png --zoominess 45 --scale')

@@ -30,6 +30,25 @@ class Test_get_thumbnail(TestCase):
     def tearDown(self):
         self.conf = None
 
+    def assertImageEqual(self, img1, img2, accuracy):
+        # difference of matrices normalized
+        c = float(sum(sum(sum((img1.astype(int) - img2.astype(int))**2))))**0.5/sum(sum(sum(img1.astype(int))))
+        print(c)
+        self.assertFalse(c > accuracy)
+
+    def compareGeneratedLoaded(self, imgname, thumbname, accuracy = 0.0004):
+        loaded_img = self.loadImage(imgname)
+        loaded_thumb = self.loadThumb(thumbname)
+        
+        # create thumbnail
+        img = Image(self.conf)
+        img.image = loaded_img
+        thumb = img.getThumbnail()
+        
+        #cv2.imwrite('/tmp/test/output.png', thumb)
+        
+        self.assertImageEqual(loaded_thumb, thumb, accuracy)
+
     def test_get_thumbnail(self):
         self.conf.paddColor = (0, 0, 255, 255)
         
@@ -37,17 +56,18 @@ class Test_get_thumbnail(TestCase):
             self.conf.cropMode = mode
             
             for name in ['landscape', 'square', 'portrait']:
-                loaded_img = self.loadImage(name)
-                loaded_thumb = self.loadThumb(name + '_thumb_' + mode)
-                
-                # create thumbnail
-                img = Image(self.conf)
-                img.image = loaded_img
-                thumb = img.getThumbnail()
-                
-                # difference of matrices normalized
-                c = float(sum(sum(sum((loaded_thumb.astype(int) - thumb.astype(int))**2))))**0.5/sum(sum(sum(loaded_thumb.astype(int))))
-                print('Mode ' + name + ': ' + str(c))
-                
-                self.assertFalse(c > 0.0005)
- 
+                print('Mode: ' + mode + ' Name: ' + name)
+                self.compareGeneratedLoaded(name, name + '_thumb_' + mode)
+
+    def test_get_thumbnail_featured(self):
+        self.conf.cropMode = 'featured'
+        self.conf.featured = [[280,120], [560, 440]]
+        
+        self.conf.zoominess = 0
+        self.compareGeneratedLoaded('featured', 'featured_thumb_0')
+        
+        self.conf.zoominess = 100
+        self.compareGeneratedLoaded('featured', 'featured_thumb_100', 0.0007)
+        
+        self.conf.zoominess = 50
+        self.compareGeneratedLoaded('featured', 'featured_thumb_50', 0.0007)

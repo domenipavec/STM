@@ -55,7 +55,7 @@ class Test_processor(TestCase):
         self.conf.input = ('examples/',)
         proc = Processor(self.conf)
         proc.process()
-        self.assertFiles(('portrait.png', 'landscape.png', 'square.png'))
+        self.assertFiles(('portrait.png', 'landscape.png', 'square.png', 'featured.png'))
     
     def test_empty_folder(self):
         self.conf.input = ('.',)
@@ -68,4 +68,4 @@ class Test_processor(TestCase):
         self.conf.recursive = True
         proc = Processor(self.conf)
         proc.process()
-        self.assertFiles(('portrait.png', 'landscape.png', 'square.png', 'recursive-square.png'))
+        self.assertFiles(('portrait.png', 'landscape.png', 'square.png', 'featured.png', 'recursive-square.png'))
