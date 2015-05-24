@@ -21,18 +21,21 @@ import os, shutil
 class Test_processor(TestCase):
 
     def assertFiles(self, files):
-        self.assertItemsEqual(os.listdir(self.tmpfolder), files)
+        if os.path.exists(self.tmpfolder):
+            self.assertItemsEqual(os.listdir(self.tmpfolder), files)
+        else:
+            self.assertItemsEqual([], files)
 
     def setUp(self):
         self.tmpfolder = path.join(tempdir, 'stm-test/')
-        os.mkdir(self.tmpfolder)
         
         self.conf = Configuration()
         self.conf.folder = self.tmpfolder
         self.conf.cropMode = 'none'
     
     def tearDown(self):
-        shutil.rmtree(self.tmpfolder)
+        if os.path.exists(self.tmpfolder):
+            shutil.rmtree(self.tmpfolder)
         
         self.conf = None
 

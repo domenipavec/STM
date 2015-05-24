@@ -9,7 +9,7 @@
 # Distributed under The MIT License, see LICENSE
 # ----------------------------------------------------------------
 
-import os.path, cv2
+import os.path, cv2, os
 import numpy as np
 
 class Image:
@@ -28,6 +28,8 @@ class Image:
     def saveThumbnail(self):
         thumb = self.getThumbnail()
         name = self.getThumbnailName()
+        if self.configuration.verbose:
+            print(name)
         cv2.imwrite(name, thumb)
 
     # Construct name for thumbnail based on image name and configuration
@@ -48,11 +50,15 @@ class Image:
             folder = 'thumbs'
         elif self.configuration.folder != None:
             folder = self.configuration.folder
-            
+        
+        path = os.path.join(path, folder)
+        if path and not os.path.exists(path):
+            os.mkdir(path)
+        
         name = self.configuration.name_prefix + name + \
             self.configuration.name_postfix + ext
         
-        return os.path.join(path, folder, name)
+        return os.path.join(path, name)
     
     # transform image to thumbnail size in cropMode
     def getThumbnail(self):

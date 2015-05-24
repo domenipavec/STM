@@ -58,3 +58,6 @@ class Configuration:
 
         # whether to save debug image
         self.debug = False
+        
+        # whether to show generated images names
+        self.verbose = False
