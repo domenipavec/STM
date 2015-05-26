@@ -46,6 +46,10 @@ class Test_image_size(TestCase):
     def test_mode_none(self):
         self.conf.cropMode = "none"
         
+        # test with square thumb
+        print("Test: Square thumb")
+        self.conf.size = (100,100)
+        
         img_p = self.getPortraitThumb()
         img_l = self.getLandscapeThumb()
         img_s = self.getSquareThumb()
@@ -54,16 +58,81 @@ class Test_image_size(TestCase):
         self.checkSize(img_l, (100, 67))
         self.checkSize(img_s, (100,100))
     
+        # test with portrait thumb
+        print("Test: Portrait thumb")
+        self.conf.size = (50, 100)
+
+        img_p = self.getPortraitThumb()
+        img_l = self.getLandscapeThumb()
+        img_s = self.getSquareThumb()
+
+        self.checkSize(img_p, (50, 75))
+        self.checkSize(img_l, (50, 33))
+        self.checkSize(img_s, (50, 50))
+
+        # test with landscape thumb
+        print("Test: Landscape thumb")
+        self.conf.size = (100, 50)
+
+        img_p = self.getPortraitThumb()
+        img_l = self.getLandscapeThumb()
+        img_s = self.getSquareThumb()
+
+        self.checkSize(img_p, (75, 50))
+        self.checkSize(img_l, (33, 50))
+        self.checkSize(img_s, (50, 50))
+
+        # test with bigger square image
+        print("Test: Square image")
+        self.conf.size = (500,500)
+        
+        img_p = self.getPortraitThumb()
+        img_l = self.getLandscapeThumb()
+        img_s = self.getSquareThumb()
+        
+        self.checkSize(img_p, (333, 500))
+        self.checkSize(img_l, (500, 333))
+        self.checkSize(img_s, (500,500))
+    
+        # test with bigger portrait image
+        print("Test: Portrait image")
+        self.conf.size = (500, 1000)
+
+        img_p = self.getPortraitThumb()
+        img_l = self.getLandscapeThumb()
+        img_s = self.getSquareThumb()
+
+        self.checkSize(img_p, (500, 750))
+        self.checkSize(img_l, (500, 333))
+        self.checkSize(img_s, (500, 500))
+
+        # test with bigger landscape image
+        print("Test: Landscape image")
+        self.conf.size = (1000, 500)
+
+        img_p = self.getPortraitThumb()
+        img_l = self.getLandscapeThumb()
+        img_s = self.getSquareThumb()
+
+        self.checkSize(img_p, (333, 500))
+        self.checkSize(img_l, (750, 500))
+        self.checkSize(img_s, (500, 500))
+
+        
     def test_mode_other(self):
         self.conf.featured = [[0,0],[100,100]]
         for mode in ['padd', 'crop', 'featured', 'smart']:
             self.conf.cropMode = mode
-            
-            img_p = self.getPortraitThumb()
-            img_l = self.getLandscapeThumb()
-            img_s = self.getSquareThumb()
-            
-            self.checkSize(img_p, (100, 100))
-            self.checkSize(img_l, (100, 100))
-            self.checkSize(img_s, (100,100))        
+            for size in [(100,100), (100, 50), (50, 100), (500, 500), (1000, 500), (500, 1000)]:
+                self.conf.size = size
+                
+                print('Test: Mode: ' + mode + ' Size: ' + str(size))
+                
+                img_p = self.getPortraitThumb()
+                img_l = self.getLandscapeThumb()
+                img_s = self.getSquareThumb()
+                
+                self.checkSize(img_p, size)
+                self.checkSize(img_l, size)
+                self.checkSize(img_s, size)
  
