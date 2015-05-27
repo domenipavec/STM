@@ -78,8 +78,8 @@ class Test_image_size(TestCase):
         img_l = self.getLandscapeThumb()
         img_s = self.getSquareThumb()
 
-        self.checkSize(img_p, (75, 50))
-        self.checkSize(img_l, (33, 50))
+        self.checkSize(img_p, (33, 50))
+        self.checkSize(img_l, (75, 50))
         self.checkSize(img_s, (50, 50))
 
         # test with bigger square image

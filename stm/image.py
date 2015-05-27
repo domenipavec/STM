@@ -67,14 +67,14 @@ class Image:
     
     # thumbnail with scale only
     def getThumbnail_none(self):
-        scale = min(float(self.configuration.size[0])/self.image.shape[0],
-                    float(self.configuration.size[1])/self.image.shape[1])
+        scale = min(float(self.configuration.size[0])/self.image.shape[1],
+                    float(self.configuration.size[1])/self.image.shape[0])
         return cv2.resize(self.image, None, fx=scale, fy=scale, interpolation=self.configuration.resizeInterpolation)
     
     # thumbnail with padding
     def getThumbnail_padd(self):
-        scale = min(float(self.configuration.size[0])/self.image.shape[0],
-                    float(self.configuration.size[1])/self.image.shape[1])
+        scale = min(float(self.configuration.size[0])/self.image.shape[1],
+                    float(self.configuration.size[1])/self.image.shape[0])
         thumb = cv2.resize(self.image, None, fx=scale, fy=scale, interpolation=self.configuration.resizeInterpolation)
         
         # calculate required padding
@@ -89,8 +89,8 @@ class Image:
     
     # thumbnail with crop
     def getThumbnail_crop(self):
-        scale = max(float(self.configuration.size[0])/self.image.shape[0],
-                    float(self.configuration.size[1])/self.image.shape[1])
+        scale = max(float(self.configuration.size[0])/self.image.shape[1],
+                    float(self.configuration.size[1])/self.image.shape[0])
         
         # calculate required crop
         horizontal = int(self.image.shape[1] - round(self.configuration.size[0]/scale))
@@ -142,8 +142,8 @@ class Image:
                     float(self.configuration.size[1])/area_dimension[1])
         
         # scale when whole image in thumb
-        min_scale = max(float(self.configuration.size[0])/self.image.shape[0],
-                    float(self.configuration.size[1])/self.image.shape[1])
+        min_scale = max(float(self.configuration.size[0])/self.image.shape[1],
+                    float(self.configuration.size[1])/self.image.shape[0])
         
         # if max zoom more out than whole thumb, correct
         if min_scale > max_scale:
@@ -165,4 +165,4 @@ class Image:
         return cv2.resize(cropped, None, fx=scale, fy=scale, interpolation=self.configuration.resizeInterpolation)
     
     def getThumbnail_smart(self):
-        return np.zeros((100, 100, 4))
+        return np.zeros((self.configuration.size[1], self.configuration.size[0], 4))
