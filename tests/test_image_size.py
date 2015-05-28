@@ -120,19 +120,22 @@ class Test_image_size(TestCase):
 
         
     def test_mode_other(self):
-        self.conf.featured = [[0,0],[100,100]]
-        for mode in ['padd', 'crop', 'featured', 'smart']:
-            self.conf.cropMode = mode
-            for size in [(100,100), (100, 50), (50, 100), (500, 500), (1000, 500), (500, 1000)]:
-                self.conf.size = size
-                
-                print('Test: Mode: ' + mode + ' Size: ' + str(size))
-                
-                img_p = self.getPortraitThumb()
-                img_l = self.getLandscapeThumb()
-                img_s = self.getSquareThumb()
-                
-                self.checkSize(img_p, size)
-                self.checkSize(img_l, size)
-                self.checkSize(img_s, size)
+        for featured in [[[0,0],[100,100]], [[0,0],[-1,-1]], [[10,10],[-10,-10]], [[90,80],[80,90]]]:
+            self.conf.featured = featured
+            for zoominess in [0,30,50,70,100]:
+                self.conf.zoominess = zoominess
+                for mode in ['padd', 'crop', 'featured', 'smart']:
+                    self.conf.cropMode = mode
+                    for size in [(100,100), (100, 50), (50, 100), (500, 500), (1000, 500), (500, 1000)]:
+                        self.conf.size = size
+
+                        print('Test: Featured: ' + str(featured) + ' Zoominess: ' + str(zoominess) + ' Mode: ' + mode + ' Size: ' + str(size))
+                        
+                        img_p = self.getPortraitThumb()
+                        img_l = self.getLandscapeThumb()
+                        img_s = self.getSquareThumb()
+                        
+                        self.checkSize(img_p, size)
+                        self.checkSize(img_l, size)
+                        self.checkSize(img_s, size)
  

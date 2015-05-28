@@ -109,27 +109,28 @@ class Image:
         # calculate coordinates for interesting area
         for point in self.configuration.featured:
             # negative coordinates start at right and bottom
-            if point[0] < 0:
-                point[0] += self.image.shape[1]
-            if point[1] < 0:
-                point[1] += self.image.shape[0]
+            x = point[0]
+            y = point[1]
+            if x < 0:
+                x += self.image.shape[1]
+            if y < 0:
+                y += self.image.shape[0]
             
-            if point[0] < 0 or point[0] >= self.image.shape[1]:
-                raise Exception("Featured point out of image!")
-            if point[1] < 0 or point[1] >= self.image.shape[0]:
-                raise Exception("Featured point out of image!")
+            if x < 0 or x >= self.image.shape[1] or \
+                y < 0 or y >= self.image.shape[0]:
+                raise Exception("Featured point " + str((x,y)) + " out of image " + str([self.image.shape[1], self.image.shape[0]]) + "!")
             
-            area_center[0] += point[0]
-            area_center[1] += point[1]
+            area_center[0] += x
+            area_center[1] += y
             
             if area_dimension[0] == 0:
-                area_dimension[0] = point[0]
+                area_dimension[0] = x
             else:
-                area_dimension[0] -= point[0]
+                area_dimension[0] -= x
             if area_dimension[1] == 0:
-                area_dimension[1] = point[1]
+                area_dimension[1] = y
             else:
-                area_dimension[1] -= point[1]
+                area_dimension[1] -= y
         
         area_center[0] /= 2
         area_center[1] /= 2
