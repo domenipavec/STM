@@ -39,6 +39,7 @@ class Test_image_size(TestCase):
     
     def setUp(self):
         self.conf = Configuration()
+        self.conf.testing = True
     
     def tearDown(self):
         self.conf = None
@@ -120,22 +121,21 @@ class Test_image_size(TestCase):
 
         
     def test_mode_other(self):
-        for featured in [[[0,0],[100,100]], [[0,0],[-1,-1]], [[10,10],[-10,-10]], [[90,80],[80,90]]]:
+        for featured in [[[0,0],[100,100]], [[0,0],[-1,-1]], [[10,10],[-10,-10]], [[90,80],[80,90]], [[10,10], [20,20]], [[-10,-10],[-20,-20]]]:
             self.conf.featured = featured
             for zoominess in [0,30,50,70,100]:
                 self.conf.zoominess = zoominess
                 for mode in ['padd', 'crop', 'featured', 'smart']:
                     self.conf.cropMode = mode
-                    for size in [(100,100), (100, 50), (50, 100), (500, 500), (1000, 500), (500, 1000)]:
-                        self.conf.size = size
-
-                        print('Test: Featured: ' + str(featured) + ' Zoominess: ' + str(zoominess) + ' Mode: ' + mode + ' Size: ' + str(size))
+                    for thumb_size in [(100,100), (100, 50), (50, 100), (500, 500), (1000, 500), (500, 1000)]:
+                        self.conf.size = thumb_size
+                        for image_size in [(300,200,4), (200,300,4), (200,200,4)]:
+                            print('\nTest: Featured: ' + str(featured) + \
+                                ', Zoominess: ' + str(zoominess) + \
+                                ', Mode: ' + mode + \
+                                ', Thumb size: ' + str(thumb_size) + \
+                                ', Image size: ' + str(image_size[0:2]))
                         
-                        img_p = self.getPortraitThumb()
-                        img_l = self.getLandscapeThumb()
-                        img_s = self.getSquareThumb()
-                        
-                        self.checkSize(img_p, size)
-                        self.checkSize(img_l, size)
-                        self.checkSize(img_s, size)
- 
+                            img = Image(self.conf)
+                            img.image = np.zeros(image_size, np.uint8)
+                            self.checkSize(img.getThumbnail(), thumb_size)

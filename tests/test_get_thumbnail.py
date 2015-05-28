@@ -67,7 +67,7 @@ class Test_get_thumbnail(TestCase):
         self.compareGeneratedLoaded('featured', 'featured_thumb_0')
         
         self.conf.zoominess = 100
-        self.compareGeneratedLoaded('featured', 'featured_thumb_100', 0.0007)
+        self.compareGeneratedLoaded('featured', 'featured_thumb_100')
         
         self.conf.zoominess = 50
-        self.compareGeneratedLoaded('featured', 'featured_thumb_50', 0.0007)
+        self.compareGeneratedLoaded('featured', 'featured_thumb_50', 0.0006)

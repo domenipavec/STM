@@ -135,8 +135,11 @@ class Image:
         area_center[0] /= 2
         area_center[1] /= 2
         
-        area_dimension[0] = abs(area_dimension[0])
-        area_dimension[1] = abs(area_dimension[1])
+        area_dimension[0] = abs(area_dimension[0]) + 1
+        area_dimension[1] = abs(area_dimension[1]) + 1
+        if self.configuration.testing:
+            print("Area dimension: " + str(area_dimension))
+            print("Area center: " + str(area_center))
         
         # scale when max zoomed in
         max_scale = min(float(self.configuration.size[0])/area_dimension[0],
@@ -145,25 +148,54 @@ class Image:
         # scale when whole image in thumb
         min_scale = max(float(self.configuration.size[0])/self.image.shape[1],
                     float(self.configuration.size[1])/self.image.shape[0])
+
+        if self.configuration.testing:
+            print("Scales: " + str((min_scale, max_scale)))
         
         # if max zoom more out than whole thumb, correct
         if min_scale > max_scale:
-            min_scale = max_scale
+            max_scale = min_scale
         
         # scale is inverse in size, so linear fit between sizes based on zoominess
         scale = 1/((1/max_scale-1/min_scale)/100*self.configuration.zoominess + 1/min_scale)
+        if self.configuration.testing:
+            print("Scale: " + str(scale))
         
         # calculate actual base image area size based on actual scale
         actual_area_size = [round(self.configuration.size[0]/scale), round(self.configuration.size[1]/scale)]
+        if self.configuration.testing:
+            print("Actual area size: " + str(actual_area_size))
+            print("Actual image size: " + str((self.image.shape[1], self.image.shape[0])))
         
         # calculate base image area 
         left = max(area_center[0] - actual_area_size[0]/2, 0)
-        right = left + actual_area_size[0]
+        right = min(left + actual_area_size[0], self.image.shape[1])
+        left = max(right - actual_area_size[0], 0)
+        
         top = max(area_center[1] - actual_area_size[1]/2, 0)
-        bottom = top + actual_area_size[1]
+        bottom = min(top + actual_area_size[1], self.image.shape[0])
+        top = max(bottom - actual_area_size[1], 0)
+        
+        if self.configuration.testing:
+            print("Base image area: " + str((left,right,top,bottom)))
         
         cropped = self.image[top:bottom, left:right]
-        return cv2.resize(cropped, None, fx=scale, fy=scale, interpolation=self.configuration.resizeInterpolation)
+        if self.configuration.testing:
+            print("Cropped size: " + str((cropped.shape[1], cropped.shape[0])))
+        
+        # correct scale, otherwise final image can be wrong dimesions by a few pixels
+        corrected_scale_x = float(self.configuration.size[0])/actual_area_size[0]
+        corrected_scale_y = float(self.configuration.size[1])/actual_area_size[1]
+        if self.configuration.testing:
+            assert(abs(corrected_scale_x - scale)/scale < 0.01)
+            assert(abs(corrected_scale_y - scale)/scale < 0.01)
+            print("Corrected scale: " + str((corrected_scale_x, corrected_scale_y)))
+        
+        resized = cv2.resize(cropped, None, fx=corrected_scale_x, fy=corrected_scale_y, interpolation=self.configuration.resizeInterpolation)
+        if self.configuration.testing:
+            print("Resized size: " + str((resized.shape[1], resized.shape[0])))
+            
+        return resized
     
     def getThumbnail_smart(self):
         return np.zeros((self.configuration.size[1], self.configuration.size[0], 4))

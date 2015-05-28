@@ -61,3 +61,6 @@ class Configuration:
         
         # whether to show generated images names
         self.verbose = False
+        
+        # testing mode
+        self.testing = False
