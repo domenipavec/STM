@@ -78,10 +78,10 @@ class Image:
         thumb = cv2.resize(self.image, None, fx=scale, fy=scale, interpolation=self.configuration.resizeInterpolation)
         
         # calculate required padding
-        horizontal = int(self.configuration.size[0] - round(self.image.shape[1]*scale))
+        horizontal = int(self.configuration.size[0] - thumb.shape[1])
         left = horizontal/2
         right = horizontal - left
-        vertical = int(self.configuration.size[1] - round(self.image.shape[0]*scale))
+        vertical = int(self.configuration.size[1] - thumb.shape[0])
         top = vertical/2
         bottom = vertical - top
         return cv2.copyMakeBorder(thumb, top, bottom, left, right, \
