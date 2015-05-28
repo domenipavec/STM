@@ -27,7 +27,7 @@ class Configuration:
         self.fileFormat = "png"
         
         # how much zooming is preffered
-        self.zoominess = 30
+        self.zoominess = 0
         
         # target image size
         self.size = (100,100)
