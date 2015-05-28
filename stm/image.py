@@ -60,6 +60,22 @@ class Image:
         
         return os.path.join(path, name)
     
+    # Resize function that uses correct interpolation based on scale
+    def resize(self, scale_x, scale_y = None, img=None):
+        if scale_y == None:
+            scale_y = scale_x
+
+        if scale_x > 1.0 or scale_y > 1.0:
+            interpol = cv2.INTER_CUBIC
+        else:
+            interpol = cv2.INTER_AREA
+        
+        if img == None:
+            img = self.image
+        
+        return cv2.resize(img, None, fx=scale_x, fy=scale_y, interpolation=interpol)
+        
+    
     # transform image to thumbnail size in cropMode
     def getThumbnail(self):
         thumbFunc = getattr(self, 'getThumbnail_' + self.configuration.cropMode)
@@ -69,13 +85,13 @@ class Image:
     def getThumbnail_none(self):
         scale = min(float(self.configuration.size[0])/self.image.shape[1],
                     float(self.configuration.size[1])/self.image.shape[0])
-        return cv2.resize(self.image, None, fx=scale, fy=scale, interpolation=self.configuration.resizeInterpolation)
+        return self.resize(scale)
     
     # thumbnail with padding
     def getThumbnail_padd(self):
         scale = min(float(self.configuration.size[0])/self.image.shape[1],
                     float(self.configuration.size[1])/self.image.shape[0])
-        thumb = cv2.resize(self.image, None, fx=scale, fy=scale, interpolation=self.configuration.resizeInterpolation)
+        thumb = self.resize(scale)
         
         # calculate required padding
         horizontal = int(self.configuration.size[0] - thumb.shape[1])
@@ -100,7 +116,7 @@ class Image:
         top = vertical/2
         bottom = vertical - top
         cropped = self.image[top:self.image.shape[0]-bottom, left:self.image.shape[1]-right]
-        return cv2.resize(cropped, None, fx=scale, fy=scale, interpolation=self.configuration.resizeInterpolation)
+        return self.resize(scale, img=cropped)
     
     def getThumbnail_featured(self):
         area_center = [0,0]
@@ -191,7 +207,7 @@ class Image:
             assert(abs(corrected_scale_y - scale)/scale < 0.01)
             print("Corrected scale: " + str((corrected_scale_x, corrected_scale_y)))
         
-        resized = cv2.resize(cropped, None, fx=corrected_scale_x, fy=corrected_scale_y, interpolation=self.configuration.resizeInterpolation)
+        resized = self.resize(corrected_scale_x, corrected_scale_y, cropped)
         if self.configuration.testing:
             print("Resized size: " + str((resized.shape[1], resized.shape[0])))
             

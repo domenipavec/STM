@@ -52,9 +52,6 @@ class Configuration:
         
         # mode for video thumbnails (time, "random", "random-still", 'ignore')
         self.videoMode = "random-still"
-        
-        # interpolation to use in resize
-        self.resizeInterpolation = cv2.INTER_AREA
 
         # whether to save debug image
         self.debug = False
