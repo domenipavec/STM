@@ -121,16 +121,31 @@ class Test_image_size(TestCase):
 
         
     def test_mode_other(self):
-        for featured in [[[0,0],[100,100]], [[0,0],[-1,-1]], [[10,10],[-10,-10]], [[90,80],[80,90]], [[10,10], [20,20]], [[-10,-10],[-20,-20]]]:
-            self.conf.featured = featured
-            for zoominess in [0,30,50,70,100]:
-                self.conf.zoominess = zoominess
-                for mode in ['padd', 'crop', 'featured', 'smart']:
-                    self.conf.cropMode = mode
-                    for thumb_size in [(100,100), (100, 50), (50, 100), (500, 500), (1000, 500), (500, 1000)]:
-                        self.conf.size = thumb_size
-                        for image_size in [(300,200,4), (200,300,4), (200,200,4)]:
-                            for allowPadd in [True, False]:
+        for mode in ['padd', 'crop', 'featured', 'smart']:
+            self.conf.cropMode = mode
+            for thumb_size in [(100,100), (100, 50), (50, 100), (500, 500), (1000, 500), (500, 1000)]:
+                self.conf.size = thumb_size
+                for image_size in [(300,200,4), (200,300,4), (200,200,4)]:
+                    # change featured area only in featured mode
+                    if mode == 'featured':
+                        featuredi = [[[0,0],[100,100]], [[0,0],[-1,-1]], [[10,10],[-10,-10]], [[90,80],[80,90]], [[10,10], [20,20]], [[-10,-10],[-20,-20]]]
+                    else:
+                        featuredi = [None]
+                    for featured in featuredi:
+                        self.conf.featured = featured
+                        # change zoominess in smart and featured modes
+                        if mode == 'featured' or mode == 'smart':
+                            zoominessi = [0,30,50,70,100]
+                        else:
+                            zoominessi = [0]
+                        for zoominess in zoominessi:
+                            self.conf.zoominess = zoominess
+                            # change allowPadd in smart and featured modes
+                            if mode == 'featured' or mode == 'smart':
+                                allowPaddi = [True, False]
+                            else:
+                                allowPaddi = [False]
+                            for allowPadd in allowPaddi:
                                 print('\nTest: Featured: ' + str(featured) + \
                                     ', Zoominess: ' + str(zoominess) + \
                                     ', Mode: ' + mode + \
