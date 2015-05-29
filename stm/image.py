@@ -20,10 +20,34 @@ class Image:
     def loadImage(self, fn):
         self.filename = fn
         self.image = cv2.imread(self.filename, cv2.IMREAD_UNCHANGED)
+        
         if self.image == None:
             return False
-        else:
-            return True
+        
+        # convert image to BGRA
+        if len(self.image.shape) == 2:
+            old_image = self.image
+            self.image = np.empty((self.image.shape[0], self.image.shape[1], 4), dtype=np.uint8)
+            self.image[:, :, 0] = old_image[:, :]
+            self.image[:, :, 1] = old_image[:, :]
+            self.image[:, :, 2] = old_image[:, :]
+            self.image[:, :, 3] = 255
+        
+        elif self.image.shape[2] == 1:
+            old_image = self.image
+            self.image = np.empty((self.image.shape[0], self.image.shape[1], 4), dtype=np.uint8)
+            self.image[:, :, 0] = old_image[:, :, 0]
+            self.image[:, :, 1] = old_image[:, :, 0]
+            self.image[:, :, 2] = old_image[:, :, 0]
+            self.image[:, :, 3] = 255
+            
+        elif self.image.shape[2] == 3:
+            old_image = self.image
+            self.image = np.empty((self.image.shape[0], self.image.shape[1], 4), dtype=np.uint8)
+            self.image[:, :, 0:3] = old_image[:, :, 0:3]
+            self.image[:, :, 3] = 255
+
+        return True
     
     def saveThumbnail(self):
         thumb = self.getThumbnail()
@@ -174,9 +198,22 @@ class Image:
         if self.configuration.testing:
             print("Scales: " + str((min_scale, max_scale)))
         
-        # if max zoom more out than whole thumb, correct
+        # if area bigger than whole image in thumb correct
         if min_scale > max_scale:
-            max_scale = min_scale
+            # add padding if allowed
+            if self.configuration.allowPadd:
+                min_scale = max_scale
+                # add padding
+                horizontal = max(int(round(self.configuration.size[0]/min_scale)) - self.image.shape[1], 0)
+                left = horizontal/2
+                right = horizontal - left
+                vertical = max(int(round(self.configuration.size[1]/min_scale)) - self.image.shape[0], 0)
+                top = vertical/2
+                bottom = vertical - top
+                self.image = cv2.copyMakeBorder(self.image, top, bottom, left, right, \
+                                        cv2.BORDER_CONSTANT, value=self.configuration.paddColor)
+            else:
+                max_scale = min_scale
         
         # scale is inverse in size, so linear fit between sizes based on zoominess
         scale = 1/((1/max_scale-1/min_scale)/100*self.configuration.zoominess + 1/min_scale)

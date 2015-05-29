@@ -50,6 +50,9 @@ class Configuration:
         # area for featured mode
         self.featured = None
         
+        # allow padding in featured and smart modes
+        self.allowPadd = False
+        
         # mode for video thumbnails (time, "random", "random-still", 'ignore')
         self.videoMode = "random-still"
 

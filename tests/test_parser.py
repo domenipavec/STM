@@ -129,7 +129,7 @@ class Test_parser(TestCase):
         conf = self.getConf('--input test.png --padd --paddColor 0,100,200,250')
         self.assertEqual(conf.paddColor, [0,100,200,250])
         
-        conf = self.getConf('--input test.png --padd --paddColor 0,100,200')
+        conf = self.getConf('--input test.png --paddColor 0,100,200')
         self.assertEqual(conf.paddColor, [0,100,200,255])
         
         self.assertInvalid('--input test.png --padd --paddColor 0')
@@ -137,7 +137,6 @@ class Test_parser(TestCase):
         self.assertInvalid('--input test.png --padd --paddColor 0,100,100,100,100')
         self.assertInvalid('--input test.png --padd --paddColor -1,100,100')
         self.assertInvalid('--input test.png --padd --paddColor 256,100,100')
-        self.assertInvalid('--input test.png --paddColor 0,100,100')
 
     def test_zoominess(self):
         conf = self.getConf('--input test.png --zoominess 10')
@@ -151,3 +150,10 @@ class Test_parser(TestCase):
         self.assertInvalid('--input test.png --zoominess 45 --padd')
         self.assertInvalid('--input test.png --zoominess 45 --crop')
         self.assertInvalid('--input test.png --zoominess 45 --scale')
+
+    def test_allowPadd(self):
+        conf = self.getConf('--input test.png --allowPadd')
+        self.assertTrue(conf.allowPadd)
+        
+        conf = self.getConf('--input test.png')
+        self.assertFalse(conf.allowPadd)

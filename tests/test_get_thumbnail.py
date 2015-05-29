@@ -71,3 +71,14 @@ class Test_get_thumbnail(TestCase):
         
         self.conf.zoominess = 50
         self.compareGeneratedLoaded('featured', 'featured_thumb_50', 0.0006)
+    
+    def test_get_thumbnail_featured_allow_padd(self):
+        self.conf.cropMode = 'featured'
+        self.conf.allowPadd = True
+        self.conf.featured = [[0,0], [-1,-1]]
+        self.conf.zoominess = 0
+        self.conf.paddColor = (0, 0, 255, 255)
+        
+        self.compareGeneratedLoaded('landscape', 'landscape_thumb_padd', 0.0006)
+        self.compareGeneratedLoaded('portrait', 'portrait_thumb_padd', 0.0007)
+        self.compareGeneratedLoaded('square', 'square_thumb_padd')

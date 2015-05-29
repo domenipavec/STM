@@ -48,6 +48,7 @@ class Parser:
         
         parser.add_argument('--paddColor', help='Color for padding (default is "255,255,255,0"), format is BGRA.')
         parser.add_argument('--zoominess', help='How much to zoom in interesting part (between 0 and 100, default is 30).', type=int)
+        parser.add_argument('--allowPadd', help='Allow adding padding when featured area is bigger than max thumb area.', action='store_true')
 
         args = parser.parse_args(arguments)
         
@@ -115,9 +116,6 @@ class Parser:
             conf.featured = (point1, point2)
         
         if args.paddColor:
-            if conf.cropMode != 'padd':
-                parser.error("--paddColor Option is only valid in --padd mode.")
-            
             # color is 3 or 4 (with alpha) comma separated values
             parts = [int(x) for x in args.paddColor.split(',') if x.isdigit() and 0 <= int(x) <= 255]
             if len(parts) == 3:
@@ -133,5 +131,7 @@ class Parser:
                 conf.zoominess = args.zoominess
             else:
                 parser.error("--zoominess Out of range")
+        
+        conf.allowPadd = args.allowPadd
         
         return conf

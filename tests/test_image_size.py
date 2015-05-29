@@ -130,12 +130,15 @@ class Test_image_size(TestCase):
                     for thumb_size in [(100,100), (100, 50), (50, 100), (500, 500), (1000, 500), (500, 1000)]:
                         self.conf.size = thumb_size
                         for image_size in [(300,200,4), (200,300,4), (200,200,4)]:
-                            print('\nTest: Featured: ' + str(featured) + \
-                                ', Zoominess: ' + str(zoominess) + \
-                                ', Mode: ' + mode + \
-                                ', Thumb size: ' + str(thumb_size) + \
-                                ', Image size: ' + str(image_size[0:2]))
-                        
-                            img = Image(self.conf)
-                            img.image = np.zeros(image_size, np.uint8)
-                            self.checkSize(img.getThumbnail(), thumb_size)
+                            for allowPadd in [True, False]:
+                                print('\nTest: Featured: ' + str(featured) + \
+                                    ', Zoominess: ' + str(zoominess) + \
+                                    ', Mode: ' + mode + \
+                                    ', Thumb size: ' + str(thumb_size) + \
+                                    ', Image size: ' + str(image_size[0:2]) + \
+                                    ', Allow padd: ' + str(allowPadd))
+                            
+                                self.conf.allowPadd = allowPadd
+                                img = Image(self.conf)
+                                img.image = np.zeros(image_size, np.uint8)
+                                self.checkSize(img.getThumbnail(), thumb_size)
