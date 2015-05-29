@@ -1,5 +1,7 @@
 # STM
-Smart thumbnail maker
+Smart thumbnail maker.
+
+Program is primarily meant for making thumbnails, but works well for smart resize to bigger size as well.
 
 ## Installation
 
