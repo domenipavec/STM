@@ -26,6 +26,25 @@ Install:
 sudo ./setup.py install
 ```
 
+### Windows
+
+Install prerequisites:
+- [Python](https://www.python.org/downloads/)
+- [Numpy](http://sourceforge.net/projects/numpy/files/NumPy/)
+- [OpenCV 2](https://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_setup/py_setup_in_windows/py_setup_in_windows.html#install-opencv-python-in-windows)
+
+Download [STM source from github](https://github.com/matematik7/STM).
+
+Install:
+```
+./setup.py install
+```
+
+The stm.exe script is installed in:
+```
+C:\Python27\Scripts\stm.exe
+```
+
 ## Usage
 
 To run the program type:
@@ -129,3 +148,9 @@ Whether padding is allowed if featured area does not fit in thumbnail. Default i
 ```
 Use edge and face detection to automatically detect featured image area. This is the default mode.
 
+## Running unit tests
+
+```
+./setup.py test
+```
+Note: some tests fail on windows.
