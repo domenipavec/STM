@@ -61,3 +61,6 @@ class Configuration:
         
         # testing mode
         self.testing = False
+        
+        # face detection object
+        self.faceCascade = None

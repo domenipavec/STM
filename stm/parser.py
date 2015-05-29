@@ -32,6 +32,7 @@ class Parser:
         parser.add_argument('--recursive', '-r', help='Parse folders recursively.', action='store_true')
         
         parser.add_argument('--verbose', '-v',  help='Print output file(s) name(s).', action='store_true')
+        parser.add_argument('--debug', '-d', help='Output debug image for smart algorithm.', action='store_true')
         
         # output file options
         parser.add_argument('--fileFormat', help='Thumbnail format (default is "png"), set to "source" to keep source image format')
@@ -68,6 +69,7 @@ class Parser:
         conf.folder = args.folder
         conf.recursive = args.recursive
         conf.verbose = args.verbose
+        conf.debug = args.debug
         
         if args.fileFormat:
             if args.fileFormat.lower() in self.supportedFormats:

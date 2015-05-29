@@ -35,6 +35,6 @@ setup(
     },
     
     package_data={
-        'stm': [ ],
+        'stm': [ 'data/haarcascade_frontalface_default.xml' ],
     }
 )

@@ -118,12 +118,18 @@ class Image:
         cropped = self.image[top:self.image.shape[0]-bottom, left:self.image.shape[1]-right]
         return self.resize(scale, img=cropped)
     
-    def getThumbnail_featured(self):
+    # thumbnail with featured area
+    def getThumbnail_featured(self, lefttop = None, rightbottom = None):
         area_center = [0,0]
         area_dimension = [0,0]
         
+        if lefttop == None:
+            points = self.configuration.featured
+        else:
+            points = [lefttop, rightbottom]
+        
         # calculate coordinates for interesting area
-        for point in self.configuration.featured:
+        for point in points:
             # negative coordinates start at right and bottom
             x = point[0]
             y = point[1]
@@ -213,5 +219,107 @@ class Image:
             
         return resized
     
+    # detect featured area automatically, then use getThumbnail_featured
     def getThumbnail_smart(self):
-        return np.zeros((self.configuration.size[1], self.configuration.size[0], 4))
+        # load face detection
+        if self.configuration.faceCascade == None:
+            self.configuration.faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+        
+        # do detection on small image
+        scale = max(200.0/self.image.shape[1],
+                        200.0/self.image.shape[0])
+        resized = cv2.resize(self.image, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+
+        # face detection
+        gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
+        faces = self.configuration.faceCascade.detectMultiScale(
+            gray,
+        )
+
+        # edge detection
+        blur = cv2.GaussianBlur(resized,(5,5),0)
+        edges = cv2.Canny(blur,100,200)
+
+        # get edge coordinates
+        nz = np.nonzero(edges)
+
+        # calculate average and min and max
+        average = [0, 0]
+        divider = [0, 0]
+        minimum = [resized.shape[1] - 1, resized.shape[0] - 1]
+        maximum = [0, 0]
+        for d in range(2):
+            for i in range(len(nz[d])):
+                average[d] += nz[1-d][i]
+                divider[d] += 1
+                if nz[1-d][i] < minimum[d]:
+                    minimum[d] = nz[1-d][i]
+                if nz[1-d][i] > maximum[d]:
+                    maximum[d] = nz[1-d][i]
+            if divider[d] != 0:
+                average[d] = float(average[d])/divider[d]
+
+        # calculate standard diviation
+        sd = [0, 0]
+        divider = [0, 0]
+        for d in range(2):
+            for i in range(len(nz[d])):
+                sd[d] += (average[d] - nz[1-d][i])**2
+                divider[d] += 1
+            if divider[d] != 0:
+                sd[d] = (float(sd[d])/divider[d])**0.5
+
+        # calculate bounding box based on average and sd
+        lefttop = [0,0]
+        rightbottom = [0,0]
+        for d in range(2):
+            lefttop[d] = max(int(round(average[d] - 1.5*sd[d])), 0)
+            rightbottom[d] = min(int(round(average[d] + 1.5*sd[d])), edges.shape[1-d] - 1)
+
+        # draw average and sd box and center
+        if self.configuration.debug:
+            cv2.rectangle(resized, tuple(lefttop), tuple(rightbottom), (0,0,255), 3)
+            cv2.circle(resized, (int(average[0]), int(average[1])), 10, (0,255,0), -1)
+
+        # if min*max area is small, replace bounding box with it
+        if (maximum[0]-minimum[0])*(maximum[1]-minimum[1]) < 0.8*resized.shape[0]*resized.shape[1]:
+            lefttop = minimum
+            rightbottom = maximum
+        
+        # draw min max area
+        if self.configuration.debug:
+            cv2.rectangle(resized, tuple(minimum), tuple(maximum), (255, 255, 0), 3)
+
+        # extend area with faces
+        for (x,y,w,h) in faces:
+            face_lefttop = (x,y)
+            face_rightbottom = (x+w, y+h)
+            for d in range(2):
+                if face_lefttop[d] < lefttop[d]:
+                    lefttop[d] = face_lefttop[d]
+                if face_rightbottom[d] > rightbottom[d]:
+                    rightbottom[d] = face_rightbottom[d]
+            
+            # draw face
+            if self.configuration.debug:
+                cv2.rectangle(resized, tuple(face_lefttop), tuple(face_rightbottom), (255,0,0), 2)
+
+        # draw final area
+        if self.configuration.debug:
+            cv2.rectangle(resized, tuple(lefttop), tuple(rightbottom), (0, 255, 255), 2)
+        
+        # write debug image
+        if self.configuration.debug:
+            path, name = os.path.split(self.filename)
+            path = os.path.join(path, 'debug')
+            if not os.path.exists(path):
+                os.mkdir(path)
+            filename = os.path.join(path, name)
+            cv2.imwrite(filename, resized)
+        
+        # scale points back to full size
+        for d in range(2):
+            lefttop[d] = int(round(lefttop[d]/scale))
+            rightbottom[d] = int(round(rightbottom[d]/scale))
+        
+        return self.getThumbnail_featured(lefttop, rightbottom)

@@ -62,7 +62,14 @@ class Test_parser(TestCase):
         
         conf = self.getConf('--input test.png')
         self.assertFalse(conf.recursive)
-    
+        
+    def test_debug(self):
+        conf = self.getConf('--input test.png --debug')
+        self.assertTrue(conf.debug)
+        
+        conf = self.getConf('--input test.png')
+        self.assertFalse(conf.debug)
+        
     def test_verbose(self):
         conf = self.getConf('--input test.png --verbose')
         self.assertTrue(conf.verbose)
